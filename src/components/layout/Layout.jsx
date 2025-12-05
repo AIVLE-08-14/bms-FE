@@ -19,6 +19,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 const drawerWidth = 240;
 
@@ -26,6 +28,8 @@ const menuItems = [
   { text: "홈", icon: <HomeIcon />, path: "/" },
   { text: "책 목록", icon: <MenuBookIcon />, path: "/books" },
   { text: "책 등록", icon: <AddCircleOutlineIcon />, path: "/books/new" },
+  { text: "로그인", path: "/login" },
+  { text: "회원가입",  path: "/signup" },
 ];
 
 function Layout(props) {
