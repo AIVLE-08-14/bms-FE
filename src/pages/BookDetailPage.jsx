@@ -14,21 +14,7 @@ import {
   Stack,
 } from "@mui/material";
 
-const API_BASE_URL = "/api/v1";
-
-// 디자인 및 레이아웃 테스트용 더미 데이터
-const dummyBook = {
-  id: 101,
-  title: "클린 아키텍처",
-  author: "로버트 C. 마틴",
-  description:
-    "아키텍처 원칙과 의존성 역전, 경계 설정을 중심으로 유지보수성 높은 시스템을 설계하는 방법을 다룹니다.",
-  genre: "개발/소프트웨어 설계",
-  ownerName: "테스트 유저",
-  createdAt: "2024-11-30",
-  thumbnail: "https://placehold.co/320x420?text=Architecture",
-  coverImageUrl: "https://placehold.co/320x420?text=Cover",
-};
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
 
 export default function BookDetailPage() {
   const { id } = useParams();
@@ -42,15 +28,6 @@ export default function BookDetailPage() {
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    // 백엔드 준비 전까지 더미 데이터로 디자인 확인
-    setBook({
-      ...dummyBook,
-      thumbnail: dummyBook.thumbnail || dummyBook.coverImageUrl,
-    });
-    setLoading(false);
-
-    // 실제 API 사용 시 주석 해제
-    /*
     const token = localStorage.getItem("token");
     const fetchBook = async () => {
       try {
@@ -84,7 +61,6 @@ export default function BookDetailPage() {
     };
 
     fetchBook();
-    */
   }, [id]);
 
   const isOwner =

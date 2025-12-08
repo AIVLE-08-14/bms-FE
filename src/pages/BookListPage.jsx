@@ -1,65 +1,78 @@
 // src/pages/BookListPage.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BookList from "../components/books/BookList";
-import { Box, Pagination, Typography, Stack } from "@mui/material";
+import { Box, Pagination, Typography, Stack, CircularProgress, Alert } from "@mui/material";
+
+// ✅ .env.local 에서 API 베이스 URL 사용 (예: http://localhost:8080)
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
 
 export default function BookListPage() {
-  // 더 자세한 테스트를 위한 더미 데이터 (이미지의 스키마 기반)
-  // TODO: 백엔드 준비 후 GET /api/v1/books (JWT 필요)로 교체
-  /*
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    fetch("/api/v1/books", { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-      .then((res) => res.ok ? res.json() : Promise.reject(res))
-      .then(setBooks)
-      .catch(() => {});
-  }, []);
-  */
-  const books = [
-    {
-      id: 1,
-      title: "클린 코드",
-      author: "로버트 C. 마틴",
-      description: "가독성과 유지보수성을 높이는 코드 작성 원칙을 다루는 책입니다.",
-      genre: "개발/프로그래밍",
-      ownerName: "홍길동",
-      createdAt: "2024-11-12",
-      thumbnail: "https://placehold.co/80x110?text=Clean+Code",
-    },
-    {
-      id: 2,
-      title: "리팩터링 2판",
-      author: "마틴 파울러",
-      description: "기존 코드를 개선하는 다양한 리팩터링 기법을 소개합니다.",
-      genre: "개발/프로그래밍",
-      ownerName: "이몽룡",
-      createdAt: "2024-10-03",
-      thumbnail: "https://placehold.co/80x110?text=Refactoring",
-    },
-    {
-      id: 3,
-      title: "이펙티브 자바",
-      author: "조슈아 블로크",
-      description: "자바 개발에서 실천할 수 있는 90여 가지 베스트 프랙티스 모음.",
-      genre: "개발/프로그래밍",
-      ownerName: "성춘향",
-      createdAt: "2024-09-21",
-      thumbnail: "https://placehold.co/80x110?text=Effective+Java",
-    },
-    {
-      id: 4,
-      title: "소프트웨어 장인",
-      author: "산드로 만쿠소",
-      description: "장인 정신을 갖춘 개발자가 되기 위한 태도와 실천법을 다룹니다.",
-      genre: "개발/문화",
-      ownerName: "임꺽정",
-      createdAt: "2024-08-18",
-      thumbnail: "https://placehold.co/80x110?text=Craftsmanship",
-    },
-  ];
-
+  const [books, setBooks] = useState([]);      // 실제 서버 데이터
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`${API_BASE_URL}/books`, {
+          method: "GET",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+
+        if (res.status === 401) {
+          setError("도서 목록을 조회하려면 로그인이 필요합니다.");
+          setBooks([]);
+          setLoading(false);
+          return;
+        }
+
+        if (!res.ok) {
+          setError("도서 목록 조회 중 오류가 발생했습니다.");
+          setBooks([]);
+          setLoading(false);
+          return;
+        }
+
+        const raw = await res.json();
+
+        // 🔁 API 정의서: [ { "id", "title", "author", "genre", "coverImageUrl" } ]
+        // 혹시 ApiResponse 래퍼로 감싸져 온 경우도 대비
+        const list = Array.isArray(raw) ? raw : Array.isArray(raw.data) ? raw.data : [];
+
+        // BookList 컴포넌트에 맞게 필드 매핑
+        const mapped = list.map((b) => ({
+          id: b.id,
+          title: b.title,
+          author: b.author,
+          description: b.description || "",      // 백엔드에 없으면 빈 문자열
+          genre: b.genre,
+          ownerName: b.ownerName || "",          // 없으면 비워둠
+          createdAt: b.createdAt || "",          // 없으면 비워둠
+          thumbnail: b.coverImageUrl || "",      // API 정의의 coverImageUrl → thumbnail
+        }));
+
+        setBooks(mapped);
+      } catch (err) {
+        console.error(err);
+        setError("도서 목록 조회 중 오류가 발생했습니다.");
+        setBooks([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, []);
 
   const totalPages = Math.ceil(books.length / itemsPerPage) || 1;
   const startIndex = (page - 1) * itemsPerPage;
@@ -89,23 +102,39 @@ export default function BookListPage() {
         </Typography>
       </Stack>
 
-      <BookList books={currentBooks} />
+      {loading && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <CircularProgress />
+        </Box>
+      )}
 
-      <Box
-        sx={{
-          mt: 4,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={handleChangePage}
-          color="primary"
-          shape="rounded"
-        />
-      </Box>
+      {!loading && error && (
+        <Box sx={{ mb: 3 }}>
+          <Alert severity="error">{error}</Alert>
+        </Box>
+      )}
+
+      {!loading && !error && (
+        <>
+          <BookList books={currentBooks} />
+
+          <Box
+            sx={{
+              mt: 4,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handleChangePage}
+              color="primary"
+              shape="rounded"
+            />
+          </Box>
+        </>
+      )}
     </Box>
   );
 }

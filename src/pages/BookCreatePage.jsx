@@ -3,22 +3,22 @@ import React, { useState } from "react";
 import "../css/BookCreatePage.css";
 import AivleLogo2 from '../assets/aivle_logo2.png';
 
-const API_BASE_URL = "/api/v1"; // TODO: 백엔드 준비 후 실제 요청 테스트 필요 (POST /api/v1/books)
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
 
 // React 컴포넌트 → UI를 화면에 그리는 함수.
 export default function BookCreatePage() {
     const [coverUrl, setCoverUrl] = useState("");
 
-    const categories = [
+    const genre = [
         "소설", "에세이", "추리", "판타지", "로맨스",
         "인문", "자기계발", "경제/경영", "과학/기술", "역사/문화"
     ];
 
     const initialForm = {
         title: "",
-        subTitle: "",
+        author: "",
         description: "",
-        category: "",
+        genre: "",
         coverUrl: "", // ← 책 표지 URL도 저장 가능하도록 확장 (선택)
     };
 
@@ -36,7 +36,7 @@ export default function BookCreatePage() {
         const next = {};
         if (!form.title.trim()) next.title = "제목은 필수입니다.";
         if (!form.description.trim()) next.description = "소개는 필수입니다.";
-        if (!form.category) next.category = "카테고리를 선택해 주세요.";
+        if (!form.genre) next.genre = "장르를 선택해 주세요.";
         return next;
     };
 
@@ -56,18 +56,25 @@ export default function BookCreatePage() {
         try {
             const payload = { ...form, coverUrl };
 
-            // TODO: 백엔드 연결 후 주석 해제하여 등록 API 테스트
-            /*
+            const token = localStorage.getItem("token");
             const res = await fetch(`${API_BASE_URL}/books`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
                 body: JSON.stringify(payload),
             });
 
-            if (!res.ok) throw new Error("서버 오류");
-            */
+            if (res.status === 401) {
+                setMessage("로그인이 필요합니다.");
+                setSubmitting(false);
+                return;
+            }
 
-            setMessage("도서 등록 요청이 완료되었습니다. (백엔드 연결 후 실 테스트 필요)");
+            if (!res.ok) throw new Error("서버 오류");
+
+            setMessage("도서 등록 요청이 완료되었습니다.");
 
             setForm(initialForm);
             setCoverUrl("");
@@ -106,15 +113,15 @@ export default function BookCreatePage() {
                         {errors.title && <p className="error-text">{errors.title}</p>}
                     </label>
 
-                    {/* 부제목 */}
+                    {/* 저자 */}
                     <label className="book-form-label">
-                        부제목을 입력해주세요
+                        저자를 입력해주세요
                         <input
                             type="text"
-                            name="subTitle"
-                            value={form.subTitle}
+                            name="author"
+                            value={form.author}
                             onChange={handleChange}
-                            placeholder="부 제목을 입력하여주세요."
+                            placeholder="저자를 입력하여주세요."
                             className="book-input"
                         />
                     </label>
@@ -137,17 +144,17 @@ export default function BookCreatePage() {
                     <label className="book-form-label">
                         책의 장르별 카테고리를 선택해주세요 *
                         <select
-                            name="category"
-                            value={form.category}
+                            name="genre"
+                            value={form.genre}
                             onChange={handleChange}
-                            className={`book-input select ${errors.category ? "error" : ""}`}
+                            className={`book-input select ${errors.genre ? "error" : ""}`}
                         >
                             <option value="">카테고리 선택</option>
-                            {categories.map((c) => (
+                            {genre.map((c) => (
                                 <option key={c} value={c}>{c}</option>
                             ))}
                         </select>
-                        {errors.category && <p className="error-text">{errors.category}</p>}
+                        {errors.genre && <p className="error-text">{errors.genre}</p>}
                     </label>
 
                     {/* 책 표지 URL 입력 */}

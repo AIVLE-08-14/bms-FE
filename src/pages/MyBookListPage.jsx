@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import BookList from "../components/books/BookList";
 
-const API_BASE_URL = "http://localhost:8080"; // 백엔드 주소에 맞게 수정
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
 
 export default function MyBookListPage() {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export default function MyBookListPage() {
 
     const fetchMyBooks = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/v1/books/me`, {
+        const res = await fetch(`${API_BASE_URL}/books/me`, {
           // 실제 엔드포인트에 맞게 수정
           headers: {
             Authorization: `Bearer ${token}`,
