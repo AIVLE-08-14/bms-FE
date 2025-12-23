@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/BookCreatePage.css";
 import AivleLogo2 from "../assets/aivle_logo2.png";
+import { BASE_URL } from "../api/client.js"
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
+const API_BASE_URL = `${BASE_URL}/api/v1`;
 
 export default function BookCreatePage() {
   const navigate = useNavigate();

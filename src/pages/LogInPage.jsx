@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Container, Paper, TextField, Button, Typography, Box, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import AivleLogo from '../assets/aivle_logo.png';
+import { BASE_URL } from "../api/client.js"
 
-// ✅ .env에서 API 주소 가져오기 (VITE_API_BASE_URL=http://localhost:8080)
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth`;
+const API_BASE_URL = `${BASE_URL}/api/v1/auth`;
 
 export default function LogInPage() {
     const navigate = useNavigate();

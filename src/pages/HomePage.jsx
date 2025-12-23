@@ -6,12 +6,13 @@ import "../css/HomePage.css";
 import banner1 from "../assets/banner1.jpg";
 import banner2 from "../assets/banner2.jpg";
 import banner3 from "../assets/banner3.jpg";
+import { BASE_URL } from "../api/client.js"
 
 // 배너 슬라이드 이미지 목록
 const bannerImages = [banner1, banner2, banner3];
 
 // .env.local 에서 API 베이스 URL 사용 (예: http://localhost:8080)
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
+const API_BASE_URL = `${BASE_URL}/api/v1`;
 
 export default function HomePage() {
   const navigate = useNavigate();

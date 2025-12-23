@@ -9,9 +9,10 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
+import { BASE_URL } from "../api/client.js"
 
 // .env.local 에서 API 베이스 URL 사용 (예: http://localhost:8080)
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
+const API_BASE_URL = `${BASE_URL}/api/v1`;
 
 export default function BookListPage() {
   const [books, setBooks] = useState([]); // 실제 서버 데이터

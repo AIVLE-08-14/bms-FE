@@ -1,6 +1,7 @@
 // src/pages/ApiTestPage.jsx
 import { useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "../api/client.js"
 
 export default function ApiTestPage() {
   const [result, setResult] = useState(null);
@@ -8,7 +9,7 @@ export default function ApiTestPage() {
 
   const testApi = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/health"); 
+      const res = await axios.get(`${BASE_URL}/api/health`); 
       // 실제 백엔드의 테스트용 API로 경로 수정해야 함
 
       setResult(res.data);
