@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../css/BookCreatePage.css";
 import AivleLogo2 from "../assets/aivle_logo2.png";
+import { BASE_URL } from "../api/client.js"
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/v1`;
+const API_BASE_URL = `${BASE_URL}/api/v1`;
 
 export default function BookEditPage() {
   const { id } = useParams();
@@ -138,7 +139,8 @@ export default function BookEditPage() {
       try {
         const raw = await res.json();
         console.log("UPDATE RESPONSE:", raw);
-      } catch (_) {
+      } catch ( e) {
+        console.log(e)
         // 204 등 응답 바디 없음
       }
 

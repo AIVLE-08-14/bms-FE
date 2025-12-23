@@ -138,7 +138,7 @@ bms-FE-main/
 ## 설치 및 실행
 
 ### 사전 요구사항
-- Node.js (v14 이상)
+- Node.js (v20 이상)
 - npm 또는 yarn
 
 ### 설치
@@ -150,21 +150,13 @@ npm install
 ### 환경 변수 설정
 `.env` 파일을 생성하고 다음 변수를 설정하세요:
 ```
-REACT_APP_API_URL
-REACT_APP_DALLE_API_KEY
+VITE_APP_API_URL
 ```
 
 ### 설치
 ```bash
 # 의존성 패키지 설치
 npm install
-```
-
-### 환경 변수 설정
-`.env` 파일을 생성하고 다음 변수를 설정하세요:
-```
-REACT_APP_API_URL
-REACT_APP_DALLE_API_KEY
 ```
 
 ### 실행
